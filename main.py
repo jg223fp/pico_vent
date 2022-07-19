@@ -2,6 +2,7 @@ from machine import Pin
 import time
 import utime
 from dht import DHT11, InvalidChecksum
+import PicoMotorDriver
 
 #pin setup
 red_led = Pin(0, Pin.OUT)
@@ -10,6 +11,7 @@ sensor_pin = Pin(27, Pin.OUT, Pin.PULL_DOWN)
 #init values
 red_led.value(0)
 sensor = DHT11(sensor_pin)
+board = PicoMotorDriver.KitronikPicoMotor()
 
 #Functions
 def boot():
@@ -26,9 +28,12 @@ def boot():
         time.sleep(0.1)
         
 def test_motor():
-    """Performs a test for the fan
+    """Performs a test for the fan by spoinning it 100% in 3 s.
     """
-    pass
+    board.motorOn(1, "f", 100)
+    time.sleep(3)
+    board.motorOff(1)
+   
 
 def test_sensor():
     """Performs a test for the DHT11 sensor.
@@ -81,4 +86,6 @@ while True:
              
 
     
-    
+
+
+
