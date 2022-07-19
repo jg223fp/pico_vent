@@ -4,6 +4,8 @@ import utime
 from dht import DHT11, InvalidChecksum
 import PicoMotorDriver
 
+time.sleep(2)  #Needed to let pico init otherwise it wont boot when on batteries
+
 #pin setup
 red_led = Pin(0, Pin.OUT)
 sensor_pin = Pin(27, Pin.OUT, Pin.PULL_DOWN)
@@ -88,12 +90,12 @@ while True:
     if humidity > HUMID_LIMIT:
         print("Motor on")
         board.motorOn(1, "f", 100)
-        #time.sleep(60)
+        time.sleep(5)
     else:
         print("Motor off")
         board.motorOff(1)
         
-    time.sleep(10)
+    #time.sleep(10)
     led_standby()
              
 
