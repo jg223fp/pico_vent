@@ -58,13 +58,13 @@ def error():
     while True:
         pass
     
-def blink_red():
+def led_standby():
     """Flashes the red LED 2 times.
     """
     print("Red LED flashing...")
-    for i in range(4):
+    for i in range(2):
         red_led.toggle()
-        time.sleep(0.5)
+        time.sleep(0.05)
         
 def get_temp():
     """Returns a temperature value from the sensor.
@@ -88,12 +88,13 @@ while True:
     if humidity > HUMID_LIMIT:
         print("Motor on")
         board.motorOn(1, "f", 100)
+        #time.sleep(60)
     else:
         print("Motor off")
         board.motorOff(1)
         
     time.sleep(10)
-    blink_red()
+    led_standby()
              
 
     
