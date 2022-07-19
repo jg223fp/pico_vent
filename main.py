@@ -12,6 +12,7 @@ sensor_pin = Pin(27, Pin.OUT, Pin.PULL_DOWN)
 red_led.value(0)
 sensor = DHT11(sensor_pin)
 board = PicoMotorDriver.KitronikPicoMotor()
+HUMID_LIMIT = 55
 
 #Functions
 def boot():
@@ -81,8 +82,18 @@ boot()
 print("Starting main program...")
 while True:  
     utime.sleep(1)
-    print("Humidity: {}".format(get_humidity()))
-    utime.sleep(1)
+    humidity = get_humidity()
+    print("Humidity: {}".format(humidity))
+    
+    if humidity > HUMID_LIMIT:
+        print("Motor on")
+        board.motorOn(1, "f", 100)
+    else:
+        print("Motor off")
+        board.motorOff(1)
+        
+    time.sleep(10)
+    blink_red()
              
 
     
