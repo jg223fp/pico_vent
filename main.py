@@ -1,7 +1,7 @@
 from machine import Pin
 import time
 import utime
-from dht import DHT11, InvalidChecksum
+from dht import DHT11
 import PicoMotorDriver
 
 time.sleep(2)  #Needed to let pico init otherwise it wont boot when on batteries
@@ -47,13 +47,13 @@ def test_sensor():
     t = get_temp()
     if t < 0 or t > 50: 
         print("ERROR: Temperature out of range")
-        error()
+        led_boot_error()
     h = get_humidity()
     if h < 15 or h > 95:  
         print("ERROR: Humidity out of range")
-        error()
+        led_boot_error()
 
-def error():
+def led_boot_error():
     """If an error accours the red LED is turned on with a solid light.
     """
     red_led.value(1)
@@ -67,16 +67,36 @@ def led_standby():
     for i in range(2):
         red_led.toggle()
         time.sleep(0.05)
+
+def led_sensor_error():
+    """Flashes LED slowly two times to indicate sensor error while reading
+    """
+    print("Red LED flashing because of error...")
+    for i in range(4):
+        red_led.toggle()
+        time.sleep(0.5)
         
 def get_temp():
     """Returns a temperature value from the sensor.
     """
-    return sensor.temperature
+    temp = 0
+    try:
+        temp = sensor.temperature
+    except:
+        temp = 666
+        led_sensor_error()
+    return temp
 
 def get_humidity():
     """Returns a humidity value from the sensor.
     """
-    return sensor.humidity
+    hum = 0
+    try:
+        hum = sensor.humidity
+    except:
+        hum = HUMID_LIMIT
+        led_sensor_error()
+    return hum
 
     
 #Main
@@ -84,18 +104,18 @@ boot()
 print("Starting main program...")
 while True:  
     utime.sleep(1)
-    humidity = get_humidity()
+    humidity = get_humidity() 
     print("Humidity: {}".format(humidity))
     
     if humidity > HUMID_LIMIT:
         print("Motor on")
         board.motorOn(1, "f", 100)
-        time.sleep(5)
+        time.sleep(10)
     else:
         print("Motor off")
         board.motorOff(1)
         
-    #time.sleep(10)
+    time.sleep(10)
     led_standby()
              
 
